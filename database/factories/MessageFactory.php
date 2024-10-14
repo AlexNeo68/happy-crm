@@ -17,7 +17,9 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => null,
+            'customer_id' => null,
+            'details' => $this->faker->sentence,
         ];
     }
 }
