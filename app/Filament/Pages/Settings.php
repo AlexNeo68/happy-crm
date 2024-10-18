@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Livewire\Subscription;
 use App\Models\Customer;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
@@ -20,6 +21,13 @@ class Settings extends Page
     protected static string $view = 'filament.pages.settings';
 
     public ?array $settings = [];
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            Subscription::class
+        ];
+    }
 
     public function __construct()
     {
