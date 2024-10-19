@@ -110,4 +110,9 @@ class AppointmentResource extends Resource
             'edit' => Pages\EditAppointment::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('starts_at', '>', now())->count();
+    }
 }

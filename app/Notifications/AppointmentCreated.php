@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Appointment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,12 +12,14 @@ class AppointmentCreated extends Notification
 {
     use Queueable;
 
+    public Appointment $appointment;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(Appointment $appointment)
     {
-        //
+        $this->appointment = $appointment;
     }
 
     /**
@@ -35,9 +38,12 @@ class AppointmentCreated extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                    ->line('Appointment has success created.')
+                    ->action('Go to new appointment', url('/dashboard/appointments/'.$this->appointment->id . '/edit'))
+                    ->line('Thank you for using our application!')
+                    ->line('First name: ' . $this->appointment?->customer->first_name)
+                    ->line('Last name: ' . $this->appointment?->customer->last_name)
+                    ->line('Service: ' . $this->appointment?->service->name);
     }
 
     /**

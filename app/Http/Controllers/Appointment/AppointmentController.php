@@ -30,8 +30,6 @@ class AppointmentController extends Controller
             'email' => 'required|email',
         ]);
 
-        dump($attributes);
-
         $customer = Customer::firstOrCreate([
             'user_id' => $user->id,
             'email' => $attributes['email']
@@ -49,9 +47,9 @@ class AppointmentController extends Controller
             'additional_notes' => $request->input('additional_notes'),
         ]);
 
-        $user->notify(new AppointmentCreated());
+        $user->notify(new AppointmentCreated($appointment));
 
-        $message = 'Appointment success created to user ' . $user->name;
+        $message = 'Appointment success created to customer ' . $user->name;
 
         return view('user.success', compact('message'));
     }
