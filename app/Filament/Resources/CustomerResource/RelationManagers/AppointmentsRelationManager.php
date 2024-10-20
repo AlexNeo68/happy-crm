@@ -1,26 +1,22 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\CustomerResource\RelationManagers;
 
-use App\Filament\Resources\AppointmentResource\Pages;
-use App\Filament\Resources\AppointmentResource\RelationManagers;
 use App\Models\Appointment;
 use App\Models\Customer;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class AppointmentResource extends Resource
+class AppointmentsRelationManager extends RelationManager
 {
-    protected static ?string $model = Appointment::class;
+    protected static string $relationship = 'appointments';
 
-    protected static ?string $navigationIcon = 'heroicon-o-calendar';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -44,9 +40,10 @@ class AppointmentResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
+            ->recordTitle(fn(Appointment $appointment) => $appointment->customer->first_name)
             ->columns([
                 Tables\Columns\TextColumn::make('customer.first_name')
                     ->label('First Name')
@@ -85,34 +82,17 @@ class AppointmentResource extends Resource
             ->filters([
                 //
             ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            RelationManagers\CustomersRelationManager::class
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListAppointments::route('/'),
-            'create' => Pages\CreateAppointment::route('/create'),
-            'edit' => Pages\EditAppointment::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('starts_at', '>', now())->count();
     }
 }
